@@ -1,6 +1,7 @@
 target/
 facturas/*.pdf
 logs/*.txt
-!logs/error_log.txt
+!logs/.gitkeep
+/config.properties
 nbproject/private/
 *.class
