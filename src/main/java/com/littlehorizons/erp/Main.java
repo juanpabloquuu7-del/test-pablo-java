@@ -41,7 +41,8 @@ public final class Main {
 
     /** La consola de Windows usa una página de códigos antigua; 65001 (UTF-8) muestra bien tildes y marcos. */
     private static void useUtf8Console() {
-        if (!System.getProperty("os.name", "").toLowerCase().contains("win")) {
+        // Sin consola interactiva (entrada por pipe o redirigida) el proceso hijo heredaría stdin y se la consumiría.
+        if (!System.getProperty("os.name", "").toLowerCase().contains("win") || System.console() == null) {
             return;
         }
         try {

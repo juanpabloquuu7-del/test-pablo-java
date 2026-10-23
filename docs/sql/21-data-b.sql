@@ -192,3 +192,80 @@ INSERT INTO participantes_evento (id_evento, id_estudiante, rol_participacion, p
 (@event0 + 5, 44, 'Participante', NULL),
 (@event0 + 5, 45, 'Participante', NULL),
 (@event0 + 5, 46, 'Participante', NULL);
+
+-- ============================================
+-- PASO 3: FINANCIERA (módulo 5)
+-- Becas, pagos del año 2026 (matrícula y pensiones) y una factura por pago.
+-- Los estudiantes con id múltiplo de 6 dejan de pagar la pensión después de junio: son los morosos del reporte.
+-- Los demás tienen un pago de pensión reciente (relativo a CURDATE()) para no figurar como morosos.
+-- Las facturas se crean sin archivo PDF; la opción "Regenerar PDF" del módulo Financiera lo genera.
+-- ============================================
+
+-- Los conceptos de pago (MAT, PENSION, UNIFORME, TRANSPORTE, ...) ya los carga 01-schema.sql; aquí solo se usan.
+
+INSERT INTO becas (id_estudiante, año_academico, porcentaje_descuento, descripcion) VALUES
+(3, 2026, 50.00, 'Beca por excelencia académica'),
+(9, 2026, 25.00, 'Beca deportiva'),
+(14, 2026, 30.00, 'Beca por convenio empresarial'),
+(22, 2026, 50.00, 'Beca socioeconómica'),
+(30, 2026, 25.00, 'Beca cultural'),
+(41, 2026, 75.00, 'Beca socioeconómica');
+
+-- Matrícula de todos los estudiantes (enero de 2026).
+INSERT INTO pagos (id_estudiante, id_acudiente, id_concepto, monto_pagado, fecha_pago, metodo_pago, año_academico, periodo_academico, notas)
+SELECT e.id_estudiante,
+       (SELECT ea.id_acudiente FROM estudiante_acudiente ea WHERE ea.id_estudiante = e.id_estudiante ORDER BY ea.es_principal DESC, ea.id_acudiente LIMIT 1),
+       (SELECT id_concepto FROM conceptos_pago WHERE codigo_concepto = 'MAT'),
+       (SELECT monto_base FROM conceptos_pago WHERE codigo_concepto = 'MAT'),
+       DATE_ADD('2026-01-05', INTERVAL (e.id_estudiante % 20) DAY),
+       ELT(1 + (e.id_estudiante % 5), 'Efectivo', 'Transferencia', 'Tarjeta Débito', 'Tarjeta Crédito', 'Cheque'),
+       2026, 'Anual', 'Pago de matrícula'
+FROM estudiantes e;
+
+-- Pensiones mensuales de enero a septiembre (los morosos solo hasta junio), con la beca aplicada.
+INSERT INTO pagos (id_estudiante, id_acudiente, id_concepto, monto_pagado, fecha_pago, metodo_pago, año_academico, periodo_academico, notas)
+WITH RECURSIVE meses (n) AS (SELECT 1 UNION ALL SELECT n + 1 FROM meses WHERE n < 9)
+SELECT e.id_estudiante,
+       (SELECT ea.id_acudiente FROM estudiante_acudiente ea WHERE ea.id_estudiante = e.id_estudiante ORDER BY ea.es_principal DESC, ea.id_acudiente LIMIT 1),
+       (SELECT id_concepto FROM conceptos_pago WHERE codigo_concepto = 'PENSION'),
+       ROUND((SELECT monto_base FROM conceptos_pago WHERE codigo_concepto = 'PENSION') * (1 - COALESCE(b.porcentaje_descuento, 0) / 100), 2),
+       LEAST(DATE_ADD(MAKEDATE(2026, 1), INTERVAL (m.n - 1) MONTH) + INTERVAL (5 + e.id_estudiante % 20) DAY, CURDATE()),
+       ELT(1 + ((e.id_estudiante + m.n) % 5), 'Efectivo', 'Transferencia', 'Tarjeta Débito', 'Tarjeta Crédito', 'Cheque'),
+       2026,
+       CASE WHEN m.n <= 3 THEN 'I' WHEN m.n <= 6 THEN 'II' ELSE 'III' END,
+       CONCAT('Pensión mes ', m.n)
+FROM estudiantes e
+JOIN meses m ON (e.id_estudiante % 6 <> 0 OR m.n <= 6)
+LEFT JOIN becas b ON b.id_estudiante = e.id_estudiante AND b.año_academico = 2026;
+
+-- Un pago de pensión reciente para los estudiantes que no son morosos (no figuran en el reporte de morosos).
+INSERT INTO pagos (id_estudiante, id_acudiente, id_concepto, monto_pagado, fecha_pago, metodo_pago, año_academico, periodo_academico, notas)
+SELECT e.id_estudiante,
+       (SELECT ea.id_acudiente FROM estudiante_acudiente ea WHERE ea.id_estudiante = e.id_estudiante ORDER BY ea.es_principal DESC, ea.id_acudiente LIMIT 1),
+       (SELECT id_concepto FROM conceptos_pago WHERE codigo_concepto = 'PENSION'),
+       ROUND((SELECT monto_base FROM conceptos_pago WHERE codigo_concepto = 'PENSION') * (1 - COALESCE(b.porcentaje_descuento, 0) / 100), 2),
+       DATE_SUB(CURDATE(), INTERVAL (e.id_estudiante % 20) DAY),
+       'Transferencia', 2026, 'III', 'Pensión reciente'
+FROM estudiantes e
+LEFT JOIN becas b ON b.id_estudiante = e.id_estudiante AND b.año_academico = 2026
+WHERE e.id_estudiante % 6 <> 0;
+
+-- Algunos pagos de transporte y uniformes para variar los ingresos por concepto.
+INSERT INTO pagos (id_estudiante, id_acudiente, id_concepto, monto_pagado, fecha_pago, metodo_pago, año_academico, periodo_academico, notas)
+SELECT e.id_estudiante,
+       (SELECT ea.id_acudiente FROM estudiante_acudiente ea WHERE ea.id_estudiante = e.id_estudiante ORDER BY ea.es_principal DESC, ea.id_acudiente LIMIT 1),
+       (SELECT id_concepto FROM conceptos_pago WHERE codigo_concepto = IF(e.id_estudiante % 2 = 0, 'TRANSPORTE', 'UNIFORME')),
+       (SELECT monto_base FROM conceptos_pago WHERE codigo_concepto = IF(e.id_estudiante % 2 = 0, 'TRANSPORTE', 'UNIFORME')),
+       DATE_ADD('2026-02-10', INTERVAL (e.id_estudiante % 15) DAY),
+       'Efectivo', 2026, IF(e.id_estudiante % 2 = 0, 'I', 'Anual'), NULL
+FROM estudiantes e
+WHERE e.id_estudiante % 3 = 0;
+
+-- Recibo y factura consecutivos por pago (el CUFE sigue la fórmula de la aplicación: SHA-256 de número + NIT + fecha).
+UPDATE pagos SET numero_recibo = CONCAT('REC-', LPAD(id_pago, 6, '0')) WHERE numero_recibo IS NULL;
+
+INSERT INTO facturas (numero_factura, id_pago, fecha_emision, cufe)
+SELECT CONCAT('FE-', LPAD(p.id_pago, 6, '0')), p.id_pago, p.fecha_pago,
+       SHA2(CONCAT('FE-', LPAD(p.id_pago, 6, '0'), '900123456-7', p.fecha_pago), 256)
+FROM pagos p
+ORDER BY p.id_pago;

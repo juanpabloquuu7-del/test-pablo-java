@@ -5,3 +5,9 @@ logs/*.txt
 /config.properties
 nbproject/private/
 *.class
+
+# JetBrains IntelliJ IDEA
+.idea/
+*.iml
+out/
+!.run/
