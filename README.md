@@ -17,7 +17,7 @@ Sistema de gestión educativa de consola para un colegio: estudiantes y acudient
 ## Requisitos
 
 - JDK 17 y Maven 3.9 o superior.
-- MySQL 8 con un usuario que pueda crear y escribir la base `erp_little_horizons`. Se recomienda un usuario dedicado en lugar de `root`.
+- MySQL 8 con un usuario que pueda crear y escribir la base `campuslands`. Se recomienda un usuario dedicado en lugar de `root`.
 
 ## Configuración de la base de datos
 

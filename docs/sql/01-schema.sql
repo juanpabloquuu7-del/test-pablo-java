@@ -14,9 +14,9 @@
 -- Orden de carga: 01 -> 02 -> 10 -> 11 -> 20 -> 21
 -- ============================================
 
-DROP DATABASE IF EXISTS erp_little_horizons;
-CREATE DATABASE erp_little_horizons CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE erp_little_horizons;
+DROP DATABASE IF EXISTS campuslands;
+CREATE DATABASE campuslands CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE campuslands;
 
 -- ============================================
 -- 1. MÓDULO DE ESTUDIANTES Y ACUDIENTES

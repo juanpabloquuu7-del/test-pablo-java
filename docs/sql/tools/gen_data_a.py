@@ -419,7 +419,7 @@ def generate_sql(subjects, assignments, schedules, enrollments, records, attenda
     lines.append("--        * Estudiante 3 en semana 202606: 3 ausencias el mismo día (Lunes 02/02), 1 solo día ausente (sin alerta).")
     lines.append("--    - Cumple UNIQUE (id_estudiante, id_materia, fecha_asistencia).")
     lines.append("-- ============================================================================")
-    lines.append("USE erp_little_horizons;\n")
+    lines.append("USE campuslands;\n")
 
     # Materias
     lines.append("-- 1. MATERIAS (60 materias, 5 por grado)")

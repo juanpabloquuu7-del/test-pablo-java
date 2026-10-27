@@ -35,7 +35,7 @@
 --        * Estudiante 3 en semana 202606: 3 ausencias el mismo día (Lunes 02/02), 1 solo día ausente (sin alerta).
 --    - Cumple UNIQUE (id_estudiante, id_materia, fecha_asistencia).
 -- ============================================================================
-USE erp_little_horizons;
+USE campuslands;
 
 -- 1. MATERIAS (60 materias, 5 por grado)
 INSERT INTO materias (id_materia, codigo_materia, nombre_materia, descripcion, id_grado, horas_semanales, esta_activa) VALUES

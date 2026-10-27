@@ -1,7 +1,7 @@
 -- Datos de prueba del Área B (Dev B): clubes, membresías, eventos, pagos, facturas, becas, recursos, préstamos. Puede asumir los IDs de 02-data-base.sql (estudiantes 1..48, acudientes 1..36, profesores 1..12).
 -- Las fechas de préstamos y pagos son relativas al día de la carga (CURDATE()), así siempre hay vencidos y morosos.
 -- Cargar UNA sola vez, después de 01-schema.sql y 02-data-base.sql (el código de recurso es único).
-USE erp_little_horizons;
+USE campuslands;
 
 -- ============================================
 -- PASO 1: RECURSOS Y PRÉSTAMOS (módulo 6)

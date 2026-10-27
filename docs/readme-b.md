@@ -10,7 +10,7 @@
 ## Requisitos
 
 - JDK 17, Maven 3.9 o superior y MySQL 8.
-- Usuario de MySQL con permisos sobre la base `erp_little_horizons`.
+- Usuario de MySQL con permisos sobre la base `campuslands`.
 
 ## Configuración de la base de datos
 

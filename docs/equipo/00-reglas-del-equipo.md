@@ -73,5 +73,5 @@ El proyecto se divide en **dos áreas independientes**. Cada dev construye sus m
 2. Todas las entradas validadas con mensaje claro y reintento.
 3. Mensaje de éxito o error en cada operación.
 4. Se puede volver al menú anterior desde cualquier punto (`0. Volver`).
-5. Probado a mano contra la base `erp_little_horizons` con los datos de prueba.
+5. Probado a mano contra la base `campuslands` con los datos de prueba.
 6. PR revisado por el otro dev.

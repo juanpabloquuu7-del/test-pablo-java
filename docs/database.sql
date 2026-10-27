@@ -21,8 +21,8 @@
 -- Orden de carga: 01 -> 02 -> 10 -> 11 -> 20 -> 21
 -- ============================================
 
-DROP DATABASE IF EXISTS erp_little_horizons;
-CREATE DATABASE erp_little_horizons CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+DROP DATABASE IF EXISTS campuslands;
+CREATE DATABASE campuslands CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE campuslands;
 
 -- ============================================
@@ -471,7 +471,7 @@ INSERT INTO conceptos_pago (codigo_concepto, nombre_concepto, descripcion, monto
 --   Hermanos: estudiantes 25..36 comparten acudiente con los estudiantes 1..12.
 -- Orden de carga: 01-schema.sql -> 02-data-base.sql
 -- ============================================
-USE erp_little_horizons;
+USE campuslands;
 
 INSERT INTO acudientes (tipo_documento, numero_documento, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, parentesco, telefono_principal, telefono_secundario, correo_electronico, direccion, ocupacion, es_responsable_financiero) VALUES
 ('CC','51007919','Julián',NULL,'Beltrán','Vargas','Padre','3101234567',NULL,'julian.beltran1@correo.com','Calle 80 # 45-12','Contador',TRUE),
@@ -678,7 +678,7 @@ INSERT INTO matriculas (id_estudiante, id_grado, año_academico, estado_matricul
 
 -- ===== 10-extras-a.sql =====
 -- Cambios al esquema del Área A (Dev A). Cada cambio con su justificación en un comentario. Se carga después de 02-data-base.sql.
-USE erp_little_horizons;
+USE campuslands;
 
 
 -- ===== 11-data-a.sql =====
@@ -719,7 +719,7 @@ USE erp_little_horizons;
 --        * Estudiante 3 en semana 202606: 3 ausencias el mismo día (Lunes 02/02), 1 solo día ausente (sin alerta).
 --    - Cumple UNIQUE (id_estudiante, id_materia, fecha_asistencia).
 -- ============================================================================
-USE erp_little_horizons;
+USE campuslands;
 
 -- 1. MATERIAS (60 materias, 5 por grado)
 INSERT INTO materias (id_materia, codigo_materia, nombre_materia, descripcion, id_grado, horas_semanales, esta_activa) VALUES
@@ -4954,14 +4954,14 @@ INSERT INTO asistencias (id_asistencia, id_estudiante, id_materia, fecha_asisten
 
 -- ===== 20-extras-b.sql =====
 -- Cambios al esquema del Área B (Dev B). Cada cambio con su justificación en un comentario.
-USE erp_little_horizons;
+USE campuslands;
 
 
 -- ===== 21-data-b.sql =====
 -- Datos de prueba del Área B (Dev B): clubes, membresías, eventos, pagos, facturas, becas, recursos, préstamos. Puede asumir los IDs de 02-data-base.sql (estudiantes 1..48, acudientes 1..36, profesores 1..12).
 -- Las fechas de préstamos y pagos son relativas al día de la carga (CURDATE()), así siempre hay vencidos y morosos.
 -- Cargar UNA sola vez, después de 01-schema.sql y 02-data-base.sql (el código de recurso es único).
-USE erp_little_horizons;
+USE campuslands;
 
 -- ============================================
 -- PASO 1: RECURSOS Y PRÉSTAMOS (módulo 6)

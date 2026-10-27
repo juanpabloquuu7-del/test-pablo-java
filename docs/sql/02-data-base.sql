@@ -6,7 +6,7 @@
 --   Hermanos: estudiantes 25..36 comparten acudiente con los estudiantes 1..12.
 -- Orden de carga: 01-schema.sql -> 02-data-base.sql
 -- ============================================
-USE erp_little_horizons;
+USE campuslands;
 
 INSERT INTO acudientes (tipo_documento, numero_documento, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, parentesco, telefono_principal, telefono_secundario, correo_electronico, direccion, ocupacion, es_responsable_financiero) VALUES
 ('CC','51007919','Julián',NULL,'Beltrán','Vargas','Padre','3101234567',NULL,'julian.beltran1@correo.com','Calle 80 # 45-12','Contador',TRUE),
